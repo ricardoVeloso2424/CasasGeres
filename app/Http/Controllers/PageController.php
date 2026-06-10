@@ -6,18 +6,6 @@ use Illuminate\View\View;
 
 class PageController extends Controller
 {
-    public function about(): View
-    {
-        return view('pages.about', [
-            'seo' => [
-                'title' => 'Sobre nos - alojamento familiar no Geres',
-                'description' => 'Conheca o projeto familiar por tras das casas de alojamento local no Geres e a forma simples de reserva direta.',
-                'canonical' => route('pages.about'),
-                'image' => config('site.default_og_image'),
-            ],
-        ]);
-    }
-
     public function faq(): View
     {
         return view('pages.faq', [

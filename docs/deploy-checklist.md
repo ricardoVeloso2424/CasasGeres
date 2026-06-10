@@ -42,7 +42,6 @@
 - Testar pelo menos uma unidade publica.
 - Testar `/atividades`.
 - Testar `/contactos`.
-- Testar `/sobre`.
 - Testar `/perguntas-frequentes`.
 - Testar `/sitemap.xml`.
 - Testar `/robots.txt`.

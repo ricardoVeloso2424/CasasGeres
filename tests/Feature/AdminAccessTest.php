@@ -34,7 +34,7 @@ class AdminAccessTest extends TestCase
     {
         $this->seed();
 
-        foreach (['/', '/casas', '/casas/casa-do-rio', '/casas/casa-do-rio/t1-a', '/atividades', '/contactos', '/sobre', '/perguntas-frequentes'] as $path) {
+        foreach (['/', '/casas', '/casas/casa-do-rio', '/casas/casa-do-rio/t1-a', '/atividades', '/contactos', '/perguntas-frequentes'] as $path) {
             $this->get($path)->assertOk();
         }
     }

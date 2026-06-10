@@ -35,7 +35,6 @@ Route::get('/atividades', [ActivityController::class, 'index'])->name('activitie
 Route::get('/contactos', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/contactos', [ContactController::class, 'store'])->middleware('throttle:5,1')->name('contact.store');
 Route::post('/pedido-reserva', [BookingRequestController::class, 'store'])->middleware('throttle:5,1')->name('booking-requests.store');
-Route::get('/sobre', [PageController::class, 'about'])->name('pages.about');
 Route::get('/perguntas-frequentes', [PageController::class, 'faq'])->name('pages.faq');
 
 Route::middleware('guest')->group(function (): void {

@@ -16,7 +16,6 @@
         ['label' => 'Inicio', 'route' => 'home', 'active' => 'home'],
         ['label' => 'Casas', 'route' => 'houses.index', 'active' => 'houses.*'],
         ['label' => 'Atividades', 'route' => 'activities.index', 'active' => 'activities.*'],
-        ['label' => 'Sobre', 'route' => 'pages.about', 'active' => 'pages.about'],
         ['label' => 'FAQ', 'route' => 'pages.faq', 'active' => 'pages.faq'],
         ['label' => 'Contactos', 'route' => 'contact.index', 'active' => 'contact.*'],
     ];
@@ -27,6 +26,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script>document.documentElement.classList.add('js');</script>
         <meta name="description" content="{{ $description }}">
         <link rel="canonical" href="{{ $canonical }}">
 
@@ -55,54 +55,68 @@
     </head>
     <body class="min-h-screen bg-stone-50 font-sans text-stone-900 antialiased">
         <div x-data="{ menuOpen: false }" class="min-h-screen">
-            <header class="sticky top-0 z-40 border-b border-stone-200 bg-white/95 shadow-sm backdrop-blur">
-                <nav class="mx-auto flex min-h-16 max-w-screen-2xl items-center justify-between px-4 py-3 sm:px-6 lg:min-h-20 lg:px-10">
-                    <a href="{{ route('home') }}" class="flex items-center gap-3" aria-label="{{ $siteName }}">
-                        <span class="flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-800 text-base font-bold text-white lg:h-12 lg:w-12">CG</span>
+            <header class="sticky top-0 z-40 border-b border-stone-200/80 bg-white/85 shadow-sm backdrop-blur-md">
+                <nav class="mx-auto flex min-h-16 max-w-screen-2xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:min-h-[4.75rem] lg:px-10">
+                    <a href="{{ route('home') }}" class="group flex items-center gap-3" aria-label="{{ $siteName }}">
+                        <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600 to-emerald-900 text-base font-bold text-white shadow-sm ring-1 ring-emerald-900/10 transition-transform duration-300 group-hover:scale-105 lg:h-12 lg:w-12">CG</span>
                         <span>
-                            <span class="block text-lg font-semibold leading-tight text-stone-950 lg:text-xl">{{ $siteName }}</span>
+                            <span class="block font-display text-lg font-semibold leading-tight text-stone-950 lg:text-xl">{{ $siteName }}</span>
                             <span class="block text-sm font-medium text-stone-500">{{ config('site.location') }}</span>
                         </span>
                     </a>
 
-                    <div class="hidden items-center gap-1 text-base font-medium text-stone-700 lg:flex">
+                    <div class="hidden items-center gap-0.5 text-base lg:flex">
                         @foreach ($navLinks as $link)
                             <a
                                 href="{{ route($link['route']) }}"
-                                class="rounded-md px-4 py-3 transition hover:bg-stone-100 hover:text-emerald-800 {{ request()->routeIs($link['active']) ? 'bg-emerald-50 text-emerald-900' : '' }}"
+                                @class(['nav-link', 'nav-link-active' => request()->routeIs($link['active'])])
+                                @if (request()->routeIs($link['active'])) aria-current="page" @endif
                             >
                                 {{ $link['label'] }}
                             </a>
                         @endforeach
                     </div>
 
-                    <div class="hidden items-center gap-3 lg:flex">
-                        <a href="tel:{{ config('site.phone_href') }}" class="rounded-md border border-stone-300 px-5 py-3 text-base font-semibold text-stone-800 hover:border-emerald-700 hover:text-emerald-800">{{ config('site.phone') }}</a>
-                        <a href="{{ route('contact.index') }}" class="rounded-md bg-emerald-800 px-6 py-3 text-base font-semibold text-white hover:bg-emerald-900">Reservar / Contactar</a>
+                    <div class="hidden items-center lg:flex">
+                        <a href="{{ route('houses.index') }}" class="btn btn-sm btn-primary">
+                            Ver casas
+                            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10h12m0 0-4.5-4.5M16 10l-4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </a>
                     </div>
 
-                    <button type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-stone-300 text-stone-800 lg:hidden" x-on:click="menuOpen = ! menuOpen" aria-label="Abrir menu" x-bind:aria-expanded="menuOpen.toString()">
+                    <button type="button" class="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-stone-300 text-stone-800 transition hover:border-emerald-600 hover:text-emerald-800 lg:hidden" x-on:click="menuOpen = ! menuOpen" aria-label="Abrir menu" x-bind:aria-expanded="menuOpen.toString()">
                         <span class="sr-only">Menu</span>
-                        <span class="grid gap-1">
-                            <span class="h-0.5 w-5 bg-current"></span>
-                            <span class="h-0.5 w-5 bg-current"></span>
-                            <span class="h-0.5 w-5 bg-current"></span>
-                        </span>
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path x-show="!menuOpen" d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <path x-show="menuOpen" x-cloak d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
                     </button>
                 </nav>
 
-                <div class="border-t border-stone-200 bg-white px-4 py-4 lg:hidden" x-show="menuOpen" x-cloak>
-                    <div class="mx-auto grid max-w-screen-2xl gap-2 text-base font-medium text-stone-700">
+                <div
+                    class="overflow-hidden border-t border-stone-200 bg-white lg:hidden"
+                    x-show="menuOpen"
+                    x-cloak
+                    x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="-translate-y-2 opacity-0"
+                    x-transition:enter-end="translate-y-0 opacity-100"
+                    x-transition:leave="transition ease-in duration-150"
+                    x-transition:leave-start="translate-y-0 opacity-100"
+                    x-transition:leave-end="-translate-y-2 opacity-0"
+                >
+                    <div class="mx-auto grid max-w-screen-2xl gap-1.5 px-4 py-4 text-base font-medium text-stone-700 sm:px-6">
                         @foreach ($navLinks as $link)
                             <a
                                 href="{{ route($link['route']) }}"
-                                class="rounded-md px-3 py-3 {{ request()->routeIs($link['active']) ? 'bg-emerald-50 text-emerald-900' : 'hover:bg-stone-50' }}"
+                                class="rounded-xl px-4 py-3 transition-colors {{ request()->routeIs($link['active']) ? 'bg-emerald-50 text-emerald-900' : 'hover:bg-stone-50 hover:text-emerald-800' }}"
                                 x-on:click="menuOpen = false"
                             >
                                 {{ $link['label'] }}
                             </a>
                         @endforeach
-                        <a href="{{ route('contact.index') }}" class="mt-2 rounded-md bg-emerald-800 px-4 py-3 text-center font-semibold text-white" x-on:click="menuOpen = false">Reservar / Contactar</a>
+                        <div class="mt-2 border-t border-stone-100 pt-3">
+                            <a href="{{ route('houses.index') }}" class="btn btn-primary btn-block" x-on:click="menuOpen = false">Ver casas</a>
+                        </div>
                     </div>
                 </div>
             </header>
@@ -112,53 +126,57 @@
             </main>
 
             <footer class="border-t border-stone-200 bg-stone-950 text-stone-100">
-                <div class="mx-auto grid max-w-screen-2xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-2 lg:grid-cols-4 lg:px-10">
-                    <div>
+                <div class="mx-auto grid max-w-screen-2xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-12 lg:px-10 lg:py-16">
+                    <div class="md:col-span-2 lg:col-span-1">
                         <div class="flex items-center gap-3">
-                            <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-700 text-sm font-bold text-white">CG</span>
-                            <p class="text-lg font-semibold">{{ $siteName }}</p>
+                            <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600 to-emerald-900 text-sm font-bold text-white ring-1 ring-white/10">CG</span>
+                            <p class="font-display text-xl font-semibold">{{ $siteName }}</p>
                         </div>
-                        <p class="mt-4 text-sm leading-6 text-stone-300">Alojamento local familiar com unidades independentes, contacto direto e apoio proximo antes da reserva.</p>
+                        <p class="mt-5 max-w-sm text-base leading-7 text-stone-300">Alojamento local familiar com unidades independentes, contacto direto e apoio proximo antes da reserva.</p>
+                        <p class="mt-6 inline-flex items-center gap-2 text-sm font-medium text-stone-200">
+                            <svg class="h-4 w-4 text-emerald-400" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.4" stroke="currentColor" stroke-width="1.8"/></svg>
+                            {{ config('site.location') }}
+                        </p>
                     </div>
 
                     <div>
-                        <p class="text-sm font-semibold uppercase tracking-[0.08em] text-stone-400">Contactos</p>
-                        <div class="mt-4 grid gap-2 text-sm text-stone-300">
-                            <span>{{ config('site.responsible_name') }}</span>
-                            <a href="tel:{{ config('site.phone_href') }}" class="hover:text-white">{{ config('site.phone') }}</a>
-                            <a href="mailto:{{ config('site.email') }}" class="hover:text-white">{{ config('site.email') }}</a>
-                            <a href="https://wa.me/{{ config('site.whatsapp') }}?text=Ola%2C%20gostava%20de%20pedir%20disponibilidade%20no%20Geres." class="hover:text-white">WhatsApp</a>
+                        <p class="text-sm font-semibold uppercase tracking-[0.12em] text-stone-400">Contactos</p>
+                        <div class="mt-5 grid gap-3 text-base text-stone-300">
+                            <span class="text-stone-400">{{ config('site.responsible_name') }}</span>
+                            <a href="tel:{{ config('site.phone_href') }}" class="inline-flex items-center gap-2.5 transition-colors hover:text-white">
+                                <svg class="h-4 w-4 shrink-0 text-emerald-400" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4h3l1.5 4-2 1.5a11 11 0 0 0 5 5l1.5-2 4 1.5v3a2 2 0 0 1-2 2A15 15 0 0 1 3 6a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+                                {{ config('site.phone') }}
+                            </a>
+                            @if (config('site.email'))
+                                <a href="mailto:{{ config('site.email') }}" class="inline-flex items-center gap-2.5 break-all transition-colors hover:text-white">
+                                    <svg class="h-4 w-4 shrink-0 text-emerald-400" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="m4 7 8 6 8-6" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+                                    {{ config('site.email') }}
+                                </a>
+                            @endif
+                            <a href="https://wa.me/{{ config('site.whatsapp') }}?text=Ola%2C%20gostava%20de%20pedir%20disponibilidade%20no%20Geres." class="inline-flex items-center gap-2.5 transition-colors hover:text-white">
+                                <svg class="h-4 w-4 shrink-0 text-emerald-400" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.4A10 10 0 1 0 12 2Zm5.1 14.1c-.2.6-1.2 1.1-1.7 1.2-.5.1-1 .1-1.7-.1-.4-.1-.9-.3-1.5-.6a9 9 0 0 1-3.6-3.7c-.3-.6-.5-1.1-.5-1.6 0-.7.4-1.4.8-1.7.2-.2.4-.2.5-.2h.4c.2 0 .3 0 .5.4l.6 1.5c.1.2 0 .4-.1.5l-.3.4c-.1.1-.2.3-.1.5.3.6.7 1.1 1.2 1.5.5.4.9.6 1.3.8.2.1.4.1.5-.1l.5-.6c.1-.2.3-.2.5-.1l1.4.7c.2.1.3.2.3.3.1.2.1.5 0 .9Z"/></svg>
+                                WhatsApp
+                            </a>
                         </div>
                     </div>
 
                     <div>
-                        <p class="text-sm font-semibold uppercase tracking-[0.08em] text-stone-400">Links rapidos</p>
-                        <div class="mt-4 grid gap-2 text-sm text-stone-300">
+                        <p class="text-sm font-semibold uppercase tracking-[0.12em] text-stone-400">Links rapidos</p>
+                        <div class="mt-5 grid gap-3 text-base text-stone-300">
                             @foreach ($navLinks as $link)
-                                <a href="{{ route($link['route']) }}" class="hover:text-white">{{ $link['label'] }}</a>
+                                <a href="{{ route($link['route']) }}" class="w-fit transition-colors hover:text-white">{{ $link['label'] }}</a>
                             @endforeach
                         </div>
-                    </div>
-
-                    <div>
-                        <p class="text-sm font-semibold uppercase tracking-[0.08em] text-stone-400">Disponibilidade</p>
-                        <p class="mt-4 text-sm leading-6 text-stone-300">As datas apresentadas sao indicativas e podem depender de sincronizacao externa. A confirmacao final e feita por contacto direto.</p>
-                        <p class="mt-4 text-sm font-semibold text-white">{{ config('site.location') }}</p>
                     </div>
                 </div>
 
                 <div class="border-t border-white/10">
-                    <div class="mx-auto flex max-w-screen-2xl flex-col gap-2 px-4 py-5 text-sm text-stone-400 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-10">
+                    <div class="mx-auto flex max-w-screen-2xl flex-col gap-2 px-4 py-6 text-sm text-stone-400 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-10">
                         <span>&copy; {{ now()->year }} {{ $siteName }}. Todos os direitos reservados.</span>
-                        <span>Reserva direta e acompanhamento familiar.</span>
+                        <span>{{ config('site.location') }}</span>
                     </div>
                 </div>
             </footer>
-
-            <div class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 sm:flex-row">
-                <a href="https://wa.me/{{ config('site.whatsapp') }}?text=Ola%2C%20gostava%20de%20pedir%20disponibilidade%20para%20uma%20casa%20no%20Geres." class="rounded-md bg-emerald-800 px-4 py-3 text-sm font-semibold text-white shadow-lg hover:bg-emerald-900">WhatsApp</a>
-                <a href="tel:{{ config('site.phone_href') }}" class="rounded-md bg-white px-4 py-3 text-sm font-semibold text-stone-900 shadow-lg ring-1 ring-stone-200 hover:text-emerald-800">Ligar</a>
-            </div>
         </div>
     </body>
 </html>

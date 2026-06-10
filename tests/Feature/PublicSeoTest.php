@@ -33,11 +33,12 @@ class PublicSeoTest extends TestCase
             route('houses.units.show', [$house, $unit]),
             route('activities.index'),
             route('contact.index'),
-            route('pages.about'),
             route('pages.faq'),
         ] as $url) {
             $this->assertStringContainsString($url, $response->getContent());
         }
+
+        $this->assertStringNotContainsString('/sobre', $response->getContent());
     }
 
     public function test_robots_txt_responds_and_points_to_sitemap(): void
@@ -56,9 +57,33 @@ class PublicSeoTest extends TestCase
     {
         $this->seed();
 
-        foreach (['/', '/casas', '/casas/casa-do-rio', '/casas/casa-do-rio/t1-a', '/atividades', '/contactos', '/sobre', '/perguntas-frequentes'] as $path) {
+        foreach (['/', '/casas', '/casas/casa-do-rio', '/casas/casa-do-rio/t1-a', '/atividades', '/contactos', '/perguntas-frequentes'] as $path) {
             $this->get($path)->assertOk();
         }
+    }
+
+    public function test_about_page_is_removed_and_not_linked(): void
+    {
+        $this->seed();
+
+        $this->get('/sobre')->assertNotFound();
+
+        $this->get('/')
+            ->assertOk()
+            ->assertDontSee('/sobre');
+    }
+
+    public function test_faq_has_no_contact_cta_and_contact_shows_location(): void
+    {
+        $this->seed();
+
+        $this->get('/perguntas-frequentes')
+            ->assertOk()
+            ->assertDontSee('Reservar / Contactar');
+
+        $this->get('/contactos')
+            ->assertOk()
+            ->assertSee(config('site.location'));
     }
 
     public function test_homepage_and_unit_page_have_basic_meta_tags(): void

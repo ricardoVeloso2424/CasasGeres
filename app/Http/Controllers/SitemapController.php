@@ -36,7 +36,6 @@ class SitemapController extends Controller
         $urls = $urls->merge([
             ['loc' => route('activities.index')],
             ['loc' => route('contact.index')],
-            ['loc' => route('pages.about')],
             ['loc' => route('pages.faq')],
         ]);
 
