@@ -6,6 +6,11 @@
         $cover = $coverImage?->url;
         $unitCount = $house->rentalUnits->count();
         $maxCapacity = $house->rentalUnits->max('capacity');
+
+        // With a single public house, "/casas" is not promoted: step back to the homepage instead.
+        $activeHouseCount = \App\Models\House::query()->active()->count();
+        $backHref = $activeHouseCount > 1 ? route('houses.index') : route('home');
+        $backLabel = $activeHouseCount > 1 ? 'Casas' : 'Início';
     @endphp
 
     <x-page-hero
@@ -17,9 +22,9 @@
         divider-to="white"
     >
         <x-slot:top>
-            <a href="{{ route('houses.index') }}" class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3.5 py-1.5 text-sm font-semibold text-white ring-1 ring-inset ring-white/25 backdrop-blur transition hover:bg-white/20">
+            <a href="{{ $backHref }}" class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3.5 py-1.5 text-sm font-semibold text-white ring-1 ring-inset ring-white/25 backdrop-blur transition hover:bg-white/20">
                 <svg class="h-4 w-4" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M16 10H4m0 0 4.5-4.5M4 10l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                Casas
+                {{ $backLabel }}
             </a>
         </x-slot:top>
 
@@ -84,7 +89,7 @@
         </div>
     </section>
 
-    <section class="bg-sand-50">
+    <section class="bg-sand-50 bg-topo">
         <div class="mx-auto max-w-screen-2xl px-4 py-16 sm:px-6 lg:px-10 lg:py-24">
             <div class="reveal flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
                 <x-section-heading

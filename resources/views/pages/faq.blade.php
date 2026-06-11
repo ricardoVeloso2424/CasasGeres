@@ -12,9 +12,9 @@
         divider-to="sand"
     />
 
-    <section class="bg-sand-50">
+    <section class="bg-sand-50 bg-topo">
         <div class="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:py-24">
-            <div class="reveal divide-y divide-sand-200/80 overflow-hidden rounded-2xl border border-sand-200 bg-white shadow-sm shadow-stone-950/5">
+            <div class="reveal divide-y divide-sand-200/80 overflow-hidden rounded-3xl border border-sand-200 bg-white shadow-card">
                 <x-faq-item question="Qual é o horário de check-in?" answer="O horário de check-in é combinado por contacto direto antes da chegada." />
                 <x-faq-item question="Qual é o horário de check-out?" answer="O check-out é normalmente até às 11h, salvo combinação diferente." />
                 <x-faq-item question="Aceitam animais?" answer="Depende da unidade e da época. Deve ser confirmado antes da reserva." />

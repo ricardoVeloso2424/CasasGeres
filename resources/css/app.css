@@ -39,6 +39,11 @@
     --color-river-800: #2b5358;
     --color-river-900: #264649;
     --color-river-950: #122628;
+
+    /* Signature soft shadows — cool green-tinted, layered. */
+    --shadow-card: 0 1px 2px rgb(20 31 23 / 0.05), 0 10px 28px -14px rgb(20 31 23 / 0.16);
+    --shadow-card-hover: 0 2px 4px rgb(20 31 23 / 0.06), 0 24px 48px -20px rgb(20 31 23 / 0.28);
+    --shadow-float: 0 2px 6px rgb(20 31 23 / 0.06), 0 28px 60px -24px rgb(20 31 23 / 0.32);
 }
 
 /* ---------------------------------------------------------------------------
@@ -76,6 +81,38 @@ select:focus-visible,
 }
 
 /* ---------------------------------------------------------------------------
+   Organic textures — tiny inline SVGs, no external assets.
+--------------------------------------------------------------------------- */
+
+/* Topographic contour lines, fir-tinted, very low opacity. */
+.bg-topo {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='300' viewBox='0 0 420 300' fill='none'%3E%3Cg stroke='%2335533d' stroke-opacity='0.055' stroke-width='1.4'%3E%3Cpath d='M-20 70c70-34 140-20 196 6s132 42 196 16 88-22 128-4'/%3E%3Cpath d='M-20 120c70-34 140-20 196 6s132 42 196 16 88-22 128-4'/%3E%3Cpath d='M-20 170c70-34 140-20 196 6s132 42 196 16 88-22 128-4'/%3E%3Cpath d='M-20 220c70-34 140-20 196 6s132 42 196 16 88-22 128-4'/%3E%3Cpath d='M-20 270c70-34 140-20 196 6s132 42 196 16 88-22 128-4'/%3E%3Cellipse cx='318' cy='84' rx='26' ry='18'/%3E%3Cellipse cx='318' cy='84' rx='48' ry='34'/%3E%3Cellipse cx='318' cy='84' rx='72' ry='52'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Topo variant for dark surfaces (footer). */
+.bg-topo-dark {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='300' viewBox='0 0 420 300' fill='none'%3E%3Cg stroke='%23e8e1d2' stroke-opacity='0.05' stroke-width='1.4'%3E%3Cpath d='M-20 70c70-34 140-20 196 6s132 42 196 16 88-22 128-4'/%3E%3Cpath d='M-20 120c70-34 140-20 196 6s132 42 196 16 88-22 128-4'/%3E%3Cpath d='M-20 170c70-34 140-20 196 6s132 42 196 16 88-22 128-4'/%3E%3Cpath d='M-20 220c70-34 140-20 196 6s132 42 196 16 88-22 128-4'/%3E%3Cpath d='M-20 270c70-34 140-20 196 6s132 42 196 16 88-22 128-4'/%3E%3Cellipse cx='318' cy='84' rx='26' ry='18'/%3E%3Cellipse cx='318' cy='84' rx='48' ry='34'/%3E%3Cellipse cx='318' cy='84' rx='72' ry='52'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Photographic grain overlay for heroes and dark panels. */
+.texture-grain {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    opacity: 0.06;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Soft radial vignette to focus hero composition. */
+.hero-vignette {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(120% 90% at 28% 38%, transparent 0%, transparent 55%, rgb(20 31 23 / 0.38) 100%);
+}
+
+/* ---------------------------------------------------------------------------
    Components
 --------------------------------------------------------------------------- */
 @layer components {
@@ -84,8 +121,20 @@ select:focus-visible,
         @apply inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-base font-semibold leading-none transition duration-200 ease-out active:translate-y-px;
     }
 
+    .btn > svg:last-child {
+        @apply transition-transform duration-200 ease-out;
+    }
+
+    .btn:hover > svg:last-child {
+        transform: translateX(3px);
+    }
+
     .btn-sm {
         @apply gap-1.5 rounded-lg px-4 py-2.5 text-sm;
+    }
+
+    .btn-lg {
+        @apply rounded-2xl px-7 py-4 text-lg;
     }
 
     .btn-block {
@@ -93,11 +142,11 @@ select:focus-visible,
     }
 
     .btn-primary {
-        @apply bg-fir-700 text-white shadow-sm shadow-fir-950/20 hover:bg-fir-800 hover:shadow-lg hover:shadow-fir-950/25;
+        @apply bg-gradient-to-b from-fir-600 to-fir-800 text-white shadow-md shadow-fir-950/25 ring-1 ring-inset ring-white/10 hover:from-fir-700 hover:to-fir-900 hover:shadow-lg hover:shadow-fir-950/30;
     }
 
     .btn-light {
-        @apply bg-white text-stone-900 shadow-sm hover:bg-sand-100 hover:shadow-md;
+        @apply bg-white text-stone-900 shadow-md shadow-fir-950/15 hover:bg-sand-100 hover:shadow-lg;
     }
 
     .btn-dark {
@@ -109,12 +158,12 @@ select:focus-visible,
     }
 
     .btn-glass {
-        @apply border border-white/40 text-white backdrop-blur-sm hover:border-white/70 hover:bg-white/10;
+        @apply border border-white/40 bg-white/5 text-white backdrop-blur-sm hover:border-white/70 hover:bg-white/15;
     }
 
     /* WhatsApp-flavoured action */
     .btn-whatsapp {
-        @apply bg-[#1f9d57] text-white shadow-sm shadow-fir-950/15 hover:bg-[#178045] hover:shadow-lg hover:shadow-fir-950/20;
+        @apply bg-gradient-to-b from-[#23ab60] to-[#178045] text-white shadow-md shadow-fir-950/20 ring-1 ring-inset ring-white/10 hover:from-[#1f9d57] hover:to-[#136e3b] hover:shadow-lg hover:shadow-fir-950/25;
     }
 
     /* Chips / badges ----------------------------------------------------- */
@@ -131,7 +180,7 @@ select:focus-visible,
     }
 
     .chip-amber {
-        @apply bg-amber-100 text-amber-900 ring-1 ring-inset ring-amber-200;
+        @apply bg-amber-50 text-amber-900 shadow-sm ring-1 ring-inset ring-amber-300/70;
     }
 
     .chip-fir {
@@ -144,19 +193,24 @@ select:focus-visible,
 
     /* Cards -------------------------------------------------------------- */
     .card {
-        @apply relative flex h-full flex-col overflow-hidden rounded-2xl border border-stone-200/70 bg-white shadow-sm shadow-stone-950/5 transition duration-300 ease-out;
+        @apply relative flex h-full flex-col overflow-hidden rounded-3xl border border-stone-200/60 bg-white shadow-card transition duration-300 ease-out;
     }
 
     .card-hover {
-        @apply hover:-translate-y-1 hover:border-sand-300 hover:shadow-xl hover:shadow-fir-950/10;
+        @apply hover:-translate-y-1.5 hover:border-sand-300 hover:shadow-card-hover;
     }
 
     .card-media {
         @apply relative overflow-hidden bg-sand-100;
     }
 
+    .card-media::after {
+        content: '';
+        @apply pointer-events-none absolute inset-0 ring-1 ring-inset ring-fir-950/10;
+    }
+
     .card-img {
-        @apply h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04];
+        @apply h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05];
     }
 
     /* Whole-card link: stretch the title anchor over the card. */
@@ -171,7 +225,7 @@ select:focus-visible,
 
     /* Quiet card footer affordance ("Ver casa ->"). */
     .card-cta {
-        @apply mt-auto flex items-center justify-between gap-3 border-t border-stone-100 pt-4 text-base font-semibold text-fir-700 transition-colors duration-200 group-hover:text-fir-900;
+        @apply mt-auto flex items-center justify-between gap-3 border-t border-sand-200/80 pt-4 text-base font-semibold text-fir-700 transition-colors duration-200 group-hover:text-fir-900;
     }
 
     /* Surfaces / info notes --------------------------------------------- */
@@ -189,7 +243,11 @@ select:focus-visible,
 
     /* Form fields -------------------------------------------------------- */
     .field {
-        @apply w-full rounded-xl border border-stone-300 bg-white px-4 py-3.5 text-base text-stone-900 shadow-sm transition-colors placeholder:text-stone-400 hover:border-stone-400 focus:border-fir-600;
+        @apply w-full rounded-xl border border-stone-300 bg-white px-4 py-3.5 text-base text-stone-900 shadow-sm transition duration-200 placeholder:text-stone-400 hover:border-stone-400 focus:border-fir-600;
+    }
+
+    .field:focus {
+        box-shadow: 0 0 0 4px rgb(64 103 75 / 0.12);
     }
 
     .field-label {
@@ -198,7 +256,7 @@ select:focus-visible,
 
     /* Navigation links --------------------------------------------------- */
     .nav-link {
-        @apply relative rounded-lg px-3.5 py-2.5 font-medium text-stone-600 transition-colors duration-200 hover:text-fir-800;
+        @apply relative rounded-xl px-3.5 py-2.5 font-medium text-stone-600 transition-colors duration-200 hover:bg-fir-600/5 hover:text-fir-800;
     }
 
     .nav-link::after {
@@ -232,7 +290,7 @@ select:focus-visible,
     }
 
     .site-header.is-scrolled {
-        @apply shadow-md shadow-stone-950/5;
+        @apply shadow-md shadow-fir-950/10;
     }
 }
 
@@ -268,6 +326,21 @@ select:focus-visible,
     }
     .animate-rise.d4 {
         animation-delay: 0.3s;
+    }
+
+    /* Cinematic one-shot settle of the hero photograph. */
+    @keyframes cg-hero-zoom {
+        from {
+            transform: scale(1.07);
+        }
+        to {
+            transform: scale(1);
+        }
+    }
+
+    .hero-img {
+        animation: cg-hero-zoom 2.4s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+        will-change: transform;
     }
 
     /* Scroll reveal — only hidden once JS confirms it can reveal them again. */

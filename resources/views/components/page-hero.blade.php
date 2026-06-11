@@ -12,10 +12,10 @@
 
 @php
     $minHeight = [
-        'lg' => 'min-h-[560px] md:min-h-[620px] lg:min-h-[680px]',
-        'md' => 'min-h-[460px] lg:min-h-[560px]',
-        'sm' => 'min-h-[400px] lg:min-h-[460px]',
-    ][$size] ?? 'min-h-[460px] lg:min-h-[560px]';
+        'lg' => 'min-h-[600px] md:min-h-[680px] lg:min-h-[780px]',
+        'md' => 'min-h-[480px] lg:min-h-[580px]',
+        'sm' => 'min-h-[400px] lg:min-h-[470px]',
+    ][$size] ?? 'min-h-[480px] lg:min-h-[580px]';
 
     $titleSize = [
         'lg' => 'text-4xl sm:text-5xl lg:text-6xl xl:text-7xl',
@@ -35,13 +35,15 @@
             alt="{{ $imageAlt }}"
             fetchpriority="high"
             decoding="async"
-            class="absolute inset-0 -z-10 h-full w-full object-cover"
+            class="hero-img absolute inset-0 -z-10 h-full w-full object-cover"
         >
     @else
         <div class="absolute inset-0 -z-10 bg-gradient-to-br from-fir-700 via-fir-900 to-fir-950" aria-hidden="true"></div>
     @endif
     <div class="absolute inset-0 -z-10 bg-gradient-to-br from-fir-950/90 via-fir-950/55 to-fir-950/20"></div>
     <div class="absolute inset-0 -z-10 bg-gradient-to-t from-fir-950/85 via-fir-950/15 to-transparent"></div>
+    <div class="hero-vignette -z-10" aria-hidden="true"></div>
+    <div class="texture-grain -z-10" aria-hidden="true"></div>
 
     <div class="mx-auto w-full max-w-screen-2xl px-4 pb-24 pt-16 sm:px-6 sm:pb-28 sm:pt-20 lg:px-10">
         @isset($top)
@@ -56,7 +58,7 @@
             <div class="animate-rise d1 {{ $eyebrow || isset($top) ? 'mt-6' : '' }}">{{ $badges }}</div>
         @endisset
 
-        <h1 class="animate-rise d2 {{ $hasAbove ? 'mt-4' : '' }} max-w-4xl font-display {{ $titleSize }} font-semibold leading-[1.05] tracking-tight text-balance">@isset($heading){{ $heading }}@else{{ $title }}@endisset</h1>
+        <h1 class="animate-rise d2 {{ $hasAbove ? 'mt-4' : '' }} max-w-4xl font-display {{ $titleSize }} font-semibold leading-[1.04] tracking-tight text-balance drop-shadow-[0_2px_18px_rgba(20,31,23,0.35)]">@isset($heading){{ $heading }}@else{{ $title }}@endisset</h1>
 
         @if ($lead)
             <p class="animate-rise d3 mt-6 max-w-2xl text-base leading-8 text-sand-100/90 sm:text-lg lg:text-xl lg:leading-9">{{ $lead }}</p>

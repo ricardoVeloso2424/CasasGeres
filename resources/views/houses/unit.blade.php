@@ -113,7 +113,7 @@
 
                 <aside
                     id="pedido-reserva"
-                    class="scroll-mt-24 overflow-hidden rounded-2xl border border-sand-200 bg-white shadow-xl shadow-fir-950/10 lg:sticky lg:top-24"
+                    class="scroll-mt-24 overflow-hidden rounded-3xl border border-sand-200 bg-white shadow-float lg:sticky lg:top-24"
                     x-data="{
                         checkIn: @js(old('check_in', '')),
                         checkOut: @js(old('check_out', '')),

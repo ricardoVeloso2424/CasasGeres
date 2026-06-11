@@ -31,7 +31,7 @@
                     />
                 </div>
 
-                <div class="reveal relative overflow-hidden rounded-2xl border border-sand-200 bg-sand-50 p-6 lg:p-7">
+                <div class="reveal relative overflow-hidden rounded-3xl border border-sand-200 bg-sand-50 p-6 lg:p-7">
                     <svg class="pointer-events-none absolute inset-0 h-full w-full text-fir-700" viewBox="0 0 480 260" fill="none" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
                         <g stroke="currentColor" stroke-width="1.5" opacity="0.08">
                             <path d="M-20 60c60-30 130-20 180 5s120 40 180 15 110-25 160 0"/>
@@ -54,7 +54,7 @@
                         <div class="min-w-0">
                             <p class="text-sm font-semibold uppercase tracking-[0.12em] text-fir-800">Localização</p>
                             <p class="mt-1 font-display text-2xl font-semibold text-stone-950">{{ $location }}</p>
-                            <p class="mt-1 text-base leading-7 text-stone-600">Casas em ambiente natural no Gerês, perto de trilhos e cascatas.</p>
+                            <p class="mt-1 text-base leading-7 text-stone-600">Alojamento em ambiente natural no Gerês, perto de trilhos e cascatas.</p>
                         </div>
                     </div>
                     <a href="https://www.google.com/maps/search/?api=1&amp;query={{ urlencode($location) }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline relative mt-5 bg-white">
@@ -108,7 +108,7 @@
                 </div>
             </div>
 
-            <form method="POST" action="{{ route('contact.store') }}" class="reveal reveal-d1 self-start overflow-hidden rounded-2xl border border-sand-200 bg-white shadow-xl shadow-fir-950/10">
+            <form method="POST" action="{{ route('contact.store') }}" class="reveal reveal-d1 self-start overflow-hidden rounded-3xl border border-sand-200 bg-white shadow-float">
                 @csrf
                 <input type="text" name="website" value="" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true">
 

@@ -18,13 +18,42 @@
     $footerEmail = config('site.email');
     $footerResponsible = config('site.responsible_name');
 
-    $navLinks = [
-        ['label' => 'Início', 'route' => 'home', 'active' => 'home'],
-        ['label' => 'Casas', 'route' => 'houses.index', 'active' => 'houses.*'],
-        ['label' => 'Atividades', 'route' => 'activities.index', 'active' => 'activities.*'],
-        ['label' => 'FAQ', 'route' => 'pages.faq', 'active' => 'pages.faq'],
-        ['label' => 'Contactos', 'route' => 'contact.index', 'active' => 'contact.*'],
+    /*
+     * Active houses for the public navigation, shared by the View Composer
+     * registered in AppServiceProvider as $navigationHouses.
+     */
+    $navHouses = $navigationHouses ?? collect();
+
+    $routeHouse = request()->route('house');
+    $currentHouseSlug = $routeHouse instanceof \App\Models\House ? $routeHouse->slug : (is_string($routeHouse) ? $routeHouse : null);
+
+    $houseLinks = $navHouses
+        ->map(fn ($navHouse) => [
+            'label' => $navHouse->name,
+            'href' => route('houses.show', $navHouse),
+            'active' => $currentHouseSlug === $navHouse->slug,
+        ])
+        ->all();
+
+    $navBefore = [
+        ['label' => 'Início', 'href' => route('home'), 'active' => request()->routeIs('home')],
     ];
+
+    $navAfter = [
+        ['label' => 'Atividades', 'href' => route('activities.index'), 'active' => request()->routeIs('activities.*')],
+        ['label' => 'FAQ', 'href' => route('pages.faq'), 'active' => request()->routeIs('pages.faq')],
+        ['label' => 'Contactos', 'href' => route('contact.index'), 'active' => request()->routeIs('contact.*')],
+    ];
+
+    $flatNavLinks = array_merge($navBefore, $houseLinks, $navAfter);
+
+    // With many houses the bar would get crowded: collapse them into a light dropdown.
+    $useHousesDropdown = count($houseLinks) > 3;
+    $anyHouseActive = collect($houseLinks)->contains('active', true);
+
+    $primaryHouse = $navHouses->first();
+    $housesCtaHref = $navHouses->count() === 1 ? route('houses.show', $primaryHouse) : route('houses.index');
+    $housesCtaLabel = $navHouses->count() === 1 ? 'Ver a casa' : 'Ver casas';
 @endphp
 
 <!DOCTYPE html>
@@ -69,7 +98,7 @@
                         <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-fir-600 to-fir-900 text-white shadow-sm ring-1 ring-fir-950/10 transition-transform duration-300 group-hover:scale-105 lg:h-12 lg:w-12">
                             <svg class="h-7 w-7" viewBox="0 0 32 32" fill="none" aria-hidden="true">
                                 <path d="M3 24 11 11l5 7 4-5.5L29 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <circle cx="23" cy="9" r="2.4" stroke="currentColor" stroke-width="1.8"/>
+                                <circle cx="23" cy="9" r="2.4" stroke="#fcd34d" stroke-width="1.8"/>
                             </svg>
                         </span>
                         <span>
@@ -79,20 +108,58 @@
                     </a>
 
                     <div class="hidden items-center gap-0.5 text-base lg:flex">
-                        @foreach ($navLinks as $link)
-                            <a
-                                href="{{ route($link['route']) }}"
-                                @class(['nav-link', 'nav-link-active' => request()->routeIs($link['active'])])
-                                @if (request()->routeIs($link['active'])) aria-current="page" @endif
-                            >
-                                {{ $link['label'] }}
-                            </a>
+                        @foreach ($navBefore as $link)
+                            <a href="{{ $link['href'] }}" @class(['nav-link', 'nav-link-active' => $link['active']]) @if ($link['active']) aria-current="page" @endif>{{ $link['label'] }}</a>
+                        @endforeach
+
+                        @if ($useHousesDropdown)
+                            <div class="relative" x-data="{ housesOpen: false }" x-on:keydown.escape.window="housesOpen = false">
+                                <button
+                                    type="button"
+                                    @class(['nav-link inline-flex items-center gap-1.5', 'nav-link-active' => $anyHouseActive])
+                                    x-on:click="housesOpen = ! housesOpen"
+                                    x-bind:aria-expanded="housesOpen.toString()"
+                                >
+                                    Alojamentos
+                                    <svg class="h-4 w-4 transition-transform duration-200" x-bind:class="housesOpen && 'rotate-180'" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m5 8 5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </button>
+                                <div
+                                    x-show="housesOpen"
+                                    x-cloak
+                                    x-on:click.outside="housesOpen = false"
+                                    x-transition:enter="transition ease-out duration-150"
+                                    x-transition:enter-start="-translate-y-1 opacity-0"
+                                    x-transition:enter-end="translate-y-0 opacity-100"
+                                    x-transition:leave="transition ease-in duration-100"
+                                    x-transition:leave-start="translate-y-0 opacity-100"
+                                    x-transition:leave-end="-translate-y-1 opacity-0"
+                                    class="absolute left-0 top-full z-50 mt-2 w-64 overflow-hidden rounded-2xl border border-sand-200 bg-white p-2 shadow-card-hover"
+                                >
+                                    @foreach ($houseLinks as $link)
+                                        <a
+                                            href="{{ $link['href'] }}"
+                                            class="block rounded-xl px-4 py-2.5 font-medium transition-colors {{ $link['active'] ? 'bg-fir-600/10 text-fir-900' : 'text-stone-700 hover:bg-sand-50 hover:text-fir-800' }}"
+                                            @if ($link['active']) aria-current="page" @endif
+                                        >
+                                            {{ $link['label'] }}
+                                        </a>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @else
+                            @foreach ($houseLinks as $link)
+                                <a href="{{ $link['href'] }}" @class(['nav-link', 'nav-link-active' => $link['active']]) @if ($link['active']) aria-current="page" @endif>{{ $link['label'] }}</a>
+                            @endforeach
+                        @endif
+
+                        @foreach ($navAfter as $link)
+                            <a href="{{ $link['href'] }}" @class(['nav-link', 'nav-link-active' => $link['active']]) @if ($link['active']) aria-current="page" @endif>{{ $link['label'] }}</a>
                         @endforeach
                     </div>
 
                     <div class="hidden items-center lg:flex">
-                        <a href="{{ route('houses.index') }}" class="btn btn-sm btn-primary">
-                            Ver casas
+                        <a href="{{ $housesCtaHref }}" class="btn btn-sm btn-primary">
+                            {{ $housesCtaLabel }}
                             <svg class="h-4 w-4" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10h12m0 0-4.5-4.5M16 10l-4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </a>
                     </div>
@@ -118,17 +185,18 @@
                     x-transition:leave-end="-translate-y-3 opacity-0"
                 >
                     <div class="mx-auto grid max-w-screen-2xl gap-1.5 px-4 py-4 text-base font-medium text-stone-700 sm:px-6">
-                        @foreach ($navLinks as $link)
+                        @foreach ($flatNavLinks as $link)
                             <a
-                                href="{{ route($link['route']) }}"
-                                class="rounded-xl px-4 py-3 transition-colors {{ request()->routeIs($link['active']) ? 'bg-fir-600/10 text-fir-900' : 'hover:bg-sand-100 hover:text-fir-800' }}"
+                                href="{{ $link['href'] }}"
+                                class="rounded-xl px-4 py-3 transition-colors {{ $link['active'] ? 'bg-fir-600/10 text-fir-900' : 'hover:bg-sand-100 hover:text-fir-800' }}"
                                 x-on:click="menuOpen = false"
+                                @if ($link['active']) aria-current="page" @endif
                             >
                                 {{ $link['label'] }}
                             </a>
                         @endforeach
                         <div class="mt-2 border-t border-sand-200 pt-3">
-                            <a href="{{ route('houses.index') }}" class="btn btn-primary btn-block" x-on:click="menuOpen = false">Ver casas</a>
+                            <a href="{{ $housesCtaHref }}" class="btn btn-primary btn-block" x-on:click="menuOpen = false">{{ $housesCtaLabel }}</a>
                         </div>
                     </div>
                 </div>
@@ -138,14 +206,19 @@
                 @yield('content')
             </main>
 
-            <footer class="bg-fir-950 text-sand-100">
-                <div class="mx-auto grid max-w-screen-2xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-12 lg:px-10 lg:py-16">
+            <footer class="relative overflow-hidden bg-fir-950 bg-topo-dark text-sand-100">
+                <svg class="pointer-events-none absolute -right-16 bottom-8 h-64 w-auto text-sand-100/[0.05] lg:h-80" viewBox="0 0 600 300" fill="currentColor" aria-hidden="true">
+                    <path d="M0 300 150 80l90 110 70-150 120 190 80-90 90 160v0z"/>
+                </svg>
+                <div class="texture-grain" aria-hidden="true"></div>
+
+                <div class="relative mx-auto grid max-w-screen-2xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-12 lg:px-10 lg:py-16">
                     <div class="md:col-span-2 lg:col-span-1">
                         <div class="flex items-center gap-3">
                             <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 text-sand-100 ring-1 ring-white/15">
                                 <svg class="h-7 w-7" viewBox="0 0 32 32" fill="none" aria-hidden="true">
                                     <path d="M3 24 11 11l5 7 4-5.5L29 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <circle cx="23" cy="9" r="2.4" stroke="currentColor" stroke-width="1.8"/>
+                                    <circle cx="23" cy="9" r="2.4" stroke="#fcd34d" stroke-width="1.8"/>
                                 </svg>
                             </span>
                             <p class="font-display text-xl font-semibold">{{ $siteName }}</p>
@@ -187,14 +260,14 @@
                     <div>
                         <p class="text-sm font-semibold uppercase tracking-[0.12em] text-fir-300">Links rápidos</p>
                         <div class="mt-5 grid gap-3 text-base text-sand-200/90">
-                            @foreach ($navLinks as $link)
-                                <a href="{{ route($link['route']) }}" class="w-fit transition-colors hover:text-white">{{ $link['label'] }}</a>
+                            @foreach ($flatNavLinks as $link)
+                                <a href="{{ $link['href'] }}" class="w-fit transition-colors hover:text-white">{{ $link['label'] }}</a>
                             @endforeach
                         </div>
                     </div>
                 </div>
 
-                <div class="border-t border-white/10">
+                <div class="relative border-t border-white/10">
                     <div class="mx-auto flex max-w-screen-2xl flex-col gap-2 px-4 py-6 text-sm text-sand-200/60 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-10">
                         <span>&copy; {{ now()->year }} {{ $siteName }}. Todos os direitos reservados.</span>
                         <span>{{ config('site.location') }}</span>

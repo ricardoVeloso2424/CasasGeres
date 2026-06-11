@@ -24,7 +24,7 @@
         @endif
     </x-page-hero>
 
-    <section class="bg-sand-50">
+    <section class="bg-sand-50 bg-topo">
         <div class="mx-auto max-w-screen-2xl px-4 py-16 sm:px-6 lg:px-10 lg:py-24">
             <div class="reveal grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-end lg:gap-10">
                 <x-section-heading

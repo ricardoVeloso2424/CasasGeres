@@ -5,6 +5,7 @@
 <section class="relative overflow-hidden bg-fir-950 text-white">
     <img src="https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1800&q=80" alt="" loading="lazy" decoding="async" class="absolute inset-0 h-full w-full object-cover opacity-25">
     <div class="absolute inset-0 bg-gradient-to-br from-fir-950 via-fir-950/90 to-fir-900/75"></div>
+    <div class="texture-grain" aria-hidden="true"></div>
 
     <div class="relative mx-auto flex max-w-screen-2xl flex-col gap-8 px-4 py-16 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-10 lg:py-20">
         <div class="reveal max-w-2xl">
