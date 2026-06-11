@@ -1,6 +1,6 @@
 @php
     $siteName = config('site.name', config('app.name'));
-    $defaultDescription = config('site.default_description', 'Alojamento local familiar no Geres para reserva direta.');
+    $defaultDescription = config('site.default_description', 'Alojamento local familiar no Gerês para reserva direta.');
     $pageTitle = $seo['title'] ?? $siteName;
     $title = str_contains($pageTitle, $siteName) ? $pageTitle : $pageTitle . ' | ' . $siteName;
     $description = $seo['description'] ?? $defaultDescription;
@@ -12,8 +12,14 @@
     $twitterCard = $ogImage ? 'summary_large_image' : 'summary';
     $jsonLd = $schema ?? null;
 
+    $footerPhone = config('site.phone');
+    $footerPhoneHref = config('site.phone_href');
+    $footerWhatsapp = config('site.whatsapp');
+    $footerEmail = config('site.email');
+    $footerResponsible = config('site.responsible_name');
+
     $navLinks = [
-        ['label' => 'Inicio', 'route' => 'home', 'active' => 'home'],
+        ['label' => 'Início', 'route' => 'home', 'active' => 'home'],
         ['label' => 'Casas', 'route' => 'houses.index', 'active' => 'houses.*'],
         ['label' => 'Atividades', 'route' => 'activities.index', 'active' => 'activities.*'],
         ['label' => 'FAQ', 'route' => 'pages.faq', 'active' => 'pages.faq'],
@@ -53,12 +59,19 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="min-h-screen bg-stone-50 font-sans text-stone-900 antialiased">
-        <div x-data="{ menuOpen: false }" class="min-h-screen">
-            <header class="sticky top-0 z-40 border-b border-stone-200/80 bg-white/85 shadow-sm backdrop-blur-md">
+    <body class="min-h-screen bg-sand-50 font-sans text-stone-900 antialiased">
+        <a href="#conteudo" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-xl focus:bg-fir-700 focus:px-5 focus:py-3 focus:text-sm focus:font-semibold focus:text-white">Saltar para o conteúdo</a>
+
+        <div x-data="{ menuOpen: false }" x-on:keydown.escape.window="menuOpen = false" class="min-h-screen">
+            <header class="site-header sticky top-0 z-40 border-b border-sand-200/80 bg-sand-50/90 backdrop-blur-md" data-elevate>
                 <nav class="mx-auto flex min-h-16 max-w-screen-2xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:min-h-[4.75rem] lg:px-10">
                     <a href="{{ route('home') }}" class="group flex items-center gap-3" aria-label="{{ $siteName }}">
-                        <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600 to-emerald-900 text-base font-bold text-white shadow-sm ring-1 ring-emerald-900/10 transition-transform duration-300 group-hover:scale-105 lg:h-12 lg:w-12">CG</span>
+                        <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-fir-600 to-fir-900 text-white shadow-sm ring-1 ring-fir-950/10 transition-transform duration-300 group-hover:scale-105 lg:h-12 lg:w-12">
+                            <svg class="h-7 w-7" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+                                <path d="M3 24 11 11l5 7 4-5.5L29 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="23" cy="9" r="2.4" stroke="currentColor" stroke-width="1.8"/>
+                            </svg>
+                        </span>
                         <span>
                             <span class="block font-display text-lg font-semibold leading-tight text-stone-950 lg:text-xl">{{ $siteName }}</span>
                             <span class="block text-sm font-medium text-stone-500">{{ config('site.location') }}</span>
@@ -84,7 +97,7 @@
                         </a>
                     </div>
 
-                    <button type="button" class="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-stone-300 text-stone-800 transition hover:border-emerald-600 hover:text-emerald-800 lg:hidden" x-on:click="menuOpen = ! menuOpen" aria-label="Abrir menu" x-bind:aria-expanded="menuOpen.toString()">
+                    <button type="button" class="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-stone-300 text-stone-800 transition hover:border-fir-600 hover:text-fir-800 lg:hidden" x-on:click="menuOpen = ! menuOpen" aria-label="Abrir menu" x-bind:aria-expanded="menuOpen.toString()">
                         <span class="sr-only">Menu</span>
                         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                             <path x-show="!menuOpen" d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -94,75 +107,86 @@
                 </nav>
 
                 <div
-                    class="overflow-hidden border-t border-stone-200 bg-white lg:hidden"
+                    class="overflow-hidden border-t border-sand-200 bg-sand-50 lg:hidden"
                     x-show="menuOpen"
                     x-cloak
-                    x-transition:enter="transition ease-out duration-200"
-                    x-transition:enter-start="-translate-y-2 opacity-0"
+                    x-transition:enter="transition ease-out duration-250"
+                    x-transition:enter-start="-translate-y-3 opacity-0"
                     x-transition:enter-end="translate-y-0 opacity-100"
                     x-transition:leave="transition ease-in duration-150"
                     x-transition:leave-start="translate-y-0 opacity-100"
-                    x-transition:leave-end="-translate-y-2 opacity-0"
+                    x-transition:leave-end="-translate-y-3 opacity-0"
                 >
                     <div class="mx-auto grid max-w-screen-2xl gap-1.5 px-4 py-4 text-base font-medium text-stone-700 sm:px-6">
                         @foreach ($navLinks as $link)
                             <a
                                 href="{{ route($link['route']) }}"
-                                class="rounded-xl px-4 py-3 transition-colors {{ request()->routeIs($link['active']) ? 'bg-emerald-50 text-emerald-900' : 'hover:bg-stone-50 hover:text-emerald-800' }}"
+                                class="rounded-xl px-4 py-3 transition-colors {{ request()->routeIs($link['active']) ? 'bg-fir-600/10 text-fir-900' : 'hover:bg-sand-100 hover:text-fir-800' }}"
                                 x-on:click="menuOpen = false"
                             >
                                 {{ $link['label'] }}
                             </a>
                         @endforeach
-                        <div class="mt-2 border-t border-stone-100 pt-3">
+                        <div class="mt-2 border-t border-sand-200 pt-3">
                             <a href="{{ route('houses.index') }}" class="btn btn-primary btn-block" x-on:click="menuOpen = false">Ver casas</a>
                         </div>
                     </div>
                 </div>
             </header>
 
-            <main>
+            <main id="conteudo">
                 @yield('content')
             </main>
 
-            <footer class="border-t border-stone-200 bg-stone-950 text-stone-100">
+            <footer class="bg-fir-950 text-sand-100">
                 <div class="mx-auto grid max-w-screen-2xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-12 lg:px-10 lg:py-16">
                     <div class="md:col-span-2 lg:col-span-1">
                         <div class="flex items-center gap-3">
-                            <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600 to-emerald-900 text-sm font-bold text-white ring-1 ring-white/10">CG</span>
+                            <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 text-sand-100 ring-1 ring-white/15">
+                                <svg class="h-7 w-7" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+                                    <path d="M3 24 11 11l5 7 4-5.5L29 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <circle cx="23" cy="9" r="2.4" stroke="currentColor" stroke-width="1.8"/>
+                                </svg>
+                            </span>
                             <p class="font-display text-xl font-semibold">{{ $siteName }}</p>
                         </div>
-                        <p class="mt-5 max-w-sm text-base leading-7 text-stone-300">Alojamento local familiar com unidades independentes, contacto direto e apoio proximo antes da reserva.</p>
-                        <p class="mt-6 inline-flex items-center gap-2 text-sm font-medium text-stone-200">
-                            <svg class="h-4 w-4 text-emerald-400" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.4" stroke="currentColor" stroke-width="1.8"/></svg>
+                        <p class="mt-5 max-w-sm text-base leading-7 text-sand-200/80">Alojamento local familiar com unidades independentes, contacto direto e apoio próximo antes da reserva.</p>
+                        <p class="mt-6 inline-flex items-center gap-2 text-sm font-medium text-sand-100">
+                            <svg class="h-4 w-4 text-fir-300" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.4" stroke="currentColor" stroke-width="1.8"/></svg>
                             {{ config('site.location') }}
                         </p>
                     </div>
 
                     <div>
-                        <p class="text-sm font-semibold uppercase tracking-[0.12em] text-stone-400">Contactos</p>
-                        <div class="mt-5 grid gap-3 text-base text-stone-300">
-                            <span class="text-stone-400">{{ config('site.responsible_name') }}</span>
-                            <a href="tel:{{ config('site.phone_href') }}" class="inline-flex items-center gap-2.5 transition-colors hover:text-white">
-                                <svg class="h-4 w-4 shrink-0 text-emerald-400" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4h3l1.5 4-2 1.5a11 11 0 0 0 5 5l1.5-2 4 1.5v3a2 2 0 0 1-2 2A15 15 0 0 1 3 6a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
-                                {{ config('site.phone') }}
-                            </a>
-                            @if (config('site.email'))
-                                <a href="mailto:{{ config('site.email') }}" class="inline-flex items-center gap-2.5 break-all transition-colors hover:text-white">
-                                    <svg class="h-4 w-4 shrink-0 text-emerald-400" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="m4 7 8 6 8-6" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
-                                    {{ config('site.email') }}
+                        <p class="text-sm font-semibold uppercase tracking-[0.12em] text-fir-300">Contactos</p>
+                        <div class="mt-5 grid gap-3 text-base text-sand-200/90">
+                            @if ($footerResponsible)
+                                <span class="text-sand-200/70">{{ $footerResponsible }}</span>
+                            @endif
+                            @if ($footerPhone)
+                                <a href="tel:{{ $footerPhoneHref }}" class="inline-flex w-fit items-center gap-2.5 transition-colors hover:text-white">
+                                    <svg class="h-4 w-4 shrink-0 text-fir-300" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4h3l1.5 4-2 1.5a11 11 0 0 0 5 5l1.5-2 4 1.5v3a2 2 0 0 1-2 2A15 15 0 0 1 3 6a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+                                    {{ $footerPhone }}
                                 </a>
                             @endif
-                            <a href="https://wa.me/{{ config('site.whatsapp') }}?text=Ola%2C%20gostava%20de%20pedir%20disponibilidade%20no%20Geres." class="inline-flex items-center gap-2.5 transition-colors hover:text-white">
-                                <svg class="h-4 w-4 shrink-0 text-emerald-400" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.4A10 10 0 1 0 12 2Zm5.1 14.1c-.2.6-1.2 1.1-1.7 1.2-.5.1-1 .1-1.7-.1-.4-.1-.9-.3-1.5-.6a9 9 0 0 1-3.6-3.7c-.3-.6-.5-1.1-.5-1.6 0-.7.4-1.4.8-1.7.2-.2.4-.2.5-.2h.4c.2 0 .3 0 .5.4l.6 1.5c.1.2 0 .4-.1.5l-.3.4c-.1.1-.2.3-.1.5.3.6.7 1.1 1.2 1.5.5.4.9.6 1.3.8.2.1.4.1.5-.1l.5-.6c.1-.2.3-.2.5-.1l1.4.7c.2.1.3.2.3.3.1.2.1.5 0 .9Z"/></svg>
-                                WhatsApp
-                            </a>
+                            @if ($footerEmail)
+                                <a href="mailto:{{ $footerEmail }}" class="inline-flex w-fit items-center gap-2.5 break-all transition-colors hover:text-white">
+                                    <svg class="h-4 w-4 shrink-0 text-fir-300" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="m4 7 8 6 8-6" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+                                    {{ $footerEmail }}
+                                </a>
+                            @endif
+                            @if ($footerWhatsapp)
+                                <a href="https://wa.me/{{ $footerWhatsapp }}?text=Ol%C3%A1%2C%20gostava%20de%20pedir%20disponibilidade%20no%20Ger%C3%AAs." class="inline-flex w-fit items-center gap-2.5 transition-colors hover:text-white">
+                                    <svg class="h-4 w-4 shrink-0 text-fir-300" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.4A10 10 0 1 0 12 2Zm5.1 14.1c-.2.6-1.2 1.1-1.7 1.2-.5.1-1 .1-1.7-.1-.4-.1-.9-.3-1.5-.6a9 9 0 0 1-3.6-3.7c-.3-.6-.5-1.1-.5-1.6 0-.7.4-1.4.8-1.7.2-.2.4-.2.5-.2h.4c.2 0 .3 0 .5.4l.6 1.5c.1.2 0 .4-.1.5l-.3.4c-.1.1-.2.3-.1.5.3.6.7 1.1 1.2 1.5.5.4.9.6 1.3.8.2.1.4.1.5-.1l.5-.6c.1-.2.3-.2.5-.1l1.4.7c.2.1.3.2.3.3.1.2.1.5 0 .9Z"/></svg>
+                                    WhatsApp
+                                </a>
+                            @endif
                         </div>
                     </div>
 
                     <div>
-                        <p class="text-sm font-semibold uppercase tracking-[0.12em] text-stone-400">Links rapidos</p>
-                        <div class="mt-5 grid gap-3 text-base text-stone-300">
+                        <p class="text-sm font-semibold uppercase tracking-[0.12em] text-fir-300">Links rápidos</p>
+                        <div class="mt-5 grid gap-3 text-base text-sand-200/90">
                             @foreach ($navLinks as $link)
                                 <a href="{{ route($link['route']) }}" class="w-fit transition-colors hover:text-white">{{ $link['label'] }}</a>
                             @endforeach
@@ -171,7 +195,7 @@
                 </div>
 
                 <div class="border-t border-white/10">
-                    <div class="mx-auto flex max-w-screen-2xl flex-col gap-2 px-4 py-6 text-sm text-stone-400 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-10">
+                    <div class="mx-auto flex max-w-screen-2xl flex-col gap-2 px-4 py-6 text-sm text-sand-200/60 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-10">
                         <span>&copy; {{ now()->year }} {{ $siteName }}. Todos os direitos reservados.</span>
                         <span>{{ config('site.location') }}</span>
                     </div>
